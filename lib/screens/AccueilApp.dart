@@ -1,13 +1,45 @@
 import 'package:appmeteo/screens/HomePage.dart';
+import 'package:appmeteo/themes/themes_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 
 class Accueilapp extends StatelessWidget {
   const Accueilapp({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
     return Scaffold(
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        actions: [
+          Text(
+            'Theme',
+            style: TextStyle(
+              color: themeProvider.isDarkMode ? Colors.white : Colors.black,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Switch(
+            value: themeProvider.isDarkMode,
+            onChanged: (value) => themeProvider.toggleTheme(),
+
+            thumbIcon: WidgetStateProperty.resolveWith((states) {
+              if (states.contains(WidgetState.selected)) {
+                return Icon(Icons.dark_mode, color: Colors.white);
+              }
+              return Icon(Icons.light_mode, color: Colors.orange);
+            }),
+            activeColor: Colors.indigo,
+            inactiveThumbColor: Colors.orange,
+            inactiveTrackColor: Colors.orange.withOpacity(0.3),
+          ),
+        ],
+      ),
       body: Container(
         height: double.infinity,
         width: double.infinity,
@@ -15,10 +47,15 @@ class Accueilapp extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [
-              const Color.fromARGB(255, 0, 6, 58),
-              const Color.fromARGB(255, 65, 29, 0),
-            ],
+            colors: themeProvider.isDarkMode
+                ? [
+                    const Color.fromARGB(255, 0, 6, 58),
+                    const Color.fromARGB(255, 65, 29, 0),
+                  ]
+                : [
+                    const Color.fromARGB(255, 236, 230, 230),
+                    const Color.fromARGB(255, 233, 219, 90),
+                  ],
           ),
         ),
 
@@ -29,10 +66,10 @@ class Accueilapp extends StatelessWidget {
               height: 100,
               width: 120,
               decoration: BoxDecoration(
-                color: const Color.fromARGB(255, 0, 11, 20),
+                color: themeProvider.isDarkMode ? Colors.black : Colors.white,
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
-                  color: const Color.fromARGB(255, 0, 1, 34),
+                  color: themeProvider.isDarkMode ? Colors.black : Colors.white,
                   width: 2,
                 ),
               ),
@@ -84,7 +121,9 @@ class Accueilapp extends StatelessWidget {
                     child: Text(
                       'App Meteo',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: themeProvider.isDarkMode
+                            ? Colors.white
+                            : Colors.blue,
                         fontSize: 30,
                         fontWeight: FontWeight.bold,
                       ),
@@ -95,7 +134,9 @@ class Accueilapp extends StatelessWidget {
                     child: Text(
                       'Votre compagnon meteo intello',
                       style: TextStyle(
-                        color: Colors.blue,
+                        color: themeProvider.isDarkMode
+                            ? Colors.blue
+                            : Colors.black,
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
@@ -110,7 +151,12 @@ class Accueilapp extends StatelessWidget {
                     ),
                     child: Text(
                       'Explorez la meteo en temps reel pour 5 grandes villes dans un monde\n Donnees actualiser, cartes interactives et plus encore.',
-                      style: TextStyle(color: Colors.grey, fontSize: 14),
+                      style: TextStyle(
+                        color: themeProvider.isDarkMode
+                            ? Colors.grey
+                            : const Color.fromARGB(255, 76, 105, 167),
+                        fontSize: 14,
+                      ),
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -120,7 +166,6 @@ class Accueilapp extends StatelessWidget {
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue,
-                // minimumSize: Size(double.infinity, 55),
                 fixedSize: Size(300, 60),
                 elevation: 10,
                 shadowColor: Colors.blue,
@@ -129,7 +174,7 @@ class Accueilapp extends StatelessWidget {
                 ),
               ),
               onPressed: () {
-                Navigator.push(
+                Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (context) => Homepage()),
                 );
@@ -143,11 +188,19 @@ class Accueilapp extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
-                        color: Colors.black,
+                        color: themeProvider.isDarkMode
+                            ? Colors.black
+                            : Colors.white,
                       ),
                     ),
                   ),
-                  Icon(Icons.arrow_right_alt, size: 30, color: Colors.black),
+                  Icon(
+                    Icons.arrow_right_alt,
+                    size: 30,
+                    color: themeProvider.isDarkMode
+                        ? Colors.black
+                        : Colors.white,
+                  ),
                 ],
               ),
             ),
@@ -156,7 +209,12 @@ class Accueilapp extends StatelessWidget {
               padding: EdgeInsets.only(top: 30),
               child: Text(
                 'Examen Dev Mobile - made by JAA-ISI',
-                style: TextStyle(color: Colors.grey, fontSize: 12),
+                style: TextStyle(
+                  color: themeProvider.isDarkMode
+                      ? Colors.grey
+                      : const Color.fromARGB(255, 76, 105, 167),
+                  fontSize: 12,
+                ),
               ),
             ),
           ],
