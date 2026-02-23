@@ -1,4 +1,4 @@
-import 'package:appmeteo/screens/HomePage.dart';
+import 'package:appmeteo/screens/LoadingPage.dart';
 import 'package:appmeteo/themes/themes_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -176,7 +176,7 @@ class Accueilapp extends StatelessWidget {
               onPressed: () {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => Homepage()),
+                  MaterialPageRoute(builder: (context) => Loadingpage()),
                 );
               },
               child: Row(

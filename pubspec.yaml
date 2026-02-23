@@ -37,6 +37,8 @@ dependencies:
   cupertino_icons: ^1.0.8
   font_awesome_flutter: ^10.12.0
   provider: ^6.1.5+1
+  flutter_earth_globe: ^2.2.0
+  lottie: ^3.3.2
 
 dev_dependencies:
   flutter_test:
@@ -58,6 +60,7 @@ flutter:
 
   assets:
   - assets/images/ 
+  - assets/animations/
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
