@@ -1,25 +1,17 @@
 import 'package:appmeteo/models/ville.dart';
-import 'package:appmeteo/screens/AccueilApp.dart';
 import 'package:appmeteo/themes/themes_provider.dart';
-import 'package:appmeteo/widgets/design_ville_card.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class Homepage extends StatefulWidget {
-  final List<Ville> villeList;
+class Detailspage extends StatelessWidget {
+  final Ville ville;
+  const Detailspage({super.key, required this.ville});
 
-  const Homepage({super.key, required this.villeList});
-
-  @override
-  State<Homepage> createState() => _HomepageState();
-}
-
-class _HomepageState extends State<Homepage> {
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
+
     return Scaffold(
-      extendBodyBehindAppBar: true,
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(
@@ -27,10 +19,7 @@ class _HomepageState extends State<Homepage> {
             color: themeProvider.isDarkMode ? Colors.white : Colors.black,
           ),
           onPressed: () {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => Accueilapp()),
-            );
+            Navigator.pop(context);
           },
         ),
         backgroundColor: Colors.transparent,
@@ -59,32 +48,6 @@ class _HomepageState extends State<Homepage> {
             inactiveTrackColor: Colors.orange.withOpacity(0.3),
           ),
         ],
-      ),
-
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: themeProvider.isDarkMode
-                ? [
-                    const Color.fromARGB(255, 0, 6, 58),
-                    const Color.fromARGB(255, 65, 29, 0),
-                  ]
-                : [
-                    const Color.fromARGB(255, 236, 230, 230),
-                    const Color.fromARGB(255, 233, 219, 90),
-                  ],
-          ),
-        ),
-        child: ListView.builder(
-          itemCount: widget.villeList.length,
-          itemBuilder: (context, index) {
-            return DesignVilleCard(ville: widget.villeList[index]);
-          },
-        ),
       ),
     );
   }
