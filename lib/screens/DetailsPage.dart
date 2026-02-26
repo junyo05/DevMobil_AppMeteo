@@ -1,5 +1,6 @@
 import 'package:appmeteo/models/ville.dart';
 import 'package:appmeteo/themes/themes_provider.dart';
+import 'package:appmeteo/widgets/design_details_card.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -12,6 +13,7 @@ class Detailspage extends StatelessWidget {
     final themeProvider = Provider.of<ThemeProvider>(context);
 
     return Scaffold(
+      extendBodyBehindAppBar: false,
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(
@@ -19,10 +21,19 @@ class Detailspage extends StatelessWidget {
             color: themeProvider.isDarkMode ? Colors.white : Colors.black,
           ),
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.pushNamed(context, '/loading');
           },
         ),
-        backgroundColor: Colors.transparent,
+        title: Text(
+          ville.nom,
+          style: TextStyle(
+            color: themeProvider.isDarkMode ? Colors.white : Colors.black,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        backgroundColor: themeProvider.isDarkMode
+            ? const Color.fromARGB(255, 0, 1, 51)
+            : const Color.fromARGB(255, 226, 224, 216),
         elevation: 0,
         actions: [
           Text(
@@ -49,6 +60,7 @@ class Detailspage extends StatelessWidget {
           ),
         ],
       ),
+      body: DesignDetailsCard(ville: ville),
     );
   }
 }

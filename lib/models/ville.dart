@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 class Ville {
   final String nom;
   final double temperature;
@@ -12,6 +14,9 @@ class Ville {
   final int leverSoleil; // sys.sunrise
   final int coucherSoleil; // sys.sunset
   final String pays;
+  final double latitude; // coord.lat
+  final double longitude; // coord.lon
+  final int date;
 
   Ville({
     required this.nom,
@@ -27,6 +32,9 @@ class Ville {
     required this.leverSoleil,
     required this.coucherSoleil,
     required this.pays,
+    required this.latitude,
+    required this.longitude,
+    required this.date,
   });
 
   factory Ville.fromJson(Map<String, dynamic> json) {
@@ -44,6 +52,13 @@ class Ville {
       leverSoleil: json['sys']['sunrise'],
       coucherSoleil: json['sys']['sunset'],
       pays: json['sys']['country'],
+      latitude: json['coord']['lat'].toDouble(),
+      longitude: json['coord']['lon'].toDouble(),
+      date: json['dt'],
     );
+  }
+  String get dateFormatee {
+    final dateTime = DateTime.fromMillisecondsSinceEpoch(date * 1000);
+    return DateFormat('EEEE dd MMMM yyyy', 'fr').format(dateTime);
   }
 }

@@ -1,9 +1,13 @@
+import 'package:appmeteo/routes/redirections.dart';
 import 'package:appmeteo/themes/themes_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 import 'screens/AccueilApp.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await initializeDateFormatting('fr', null);
   runApp(
     ChangeNotifierProvider(
       create: (context) => ThemeProvider(),
@@ -26,6 +30,8 @@ class _MyAppState extends State<MyApp> {
 
     return MaterialApp(
       title: 'Flutter examen app meteo',
+      onGenerateRoute: Redirections.generateRoute,
+      initialRoute: '/AccueilApp',
       debugShowCheckedModeBanner: false,
       themeMode: themeProvider.isDarkMode ? ThemeMode.dark : ThemeMode.light,
       darkTheme: ThemeData.dark(),

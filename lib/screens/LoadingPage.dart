@@ -1,15 +1,14 @@
-import 'dart:convert' as convert;
+import 'dart:async';
 
 import 'package:appmeteo/models/ville.dart';
-import 'package:appmeteo/screens/HomePage.dart';
+import 'package:appmeteo/services/meteo_services.dart';
 import 'package:appmeteo/themes/themes_provider.dart';
-import 'package:appmeteo/utils/constantes.dart';
 import 'package:appmeteo/utils/images_constantes.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:lottie/lottie.dart';
 import 'package:percent_indicator/percent_indicator.dart';
+import 'package:appmeteo/utils/messagesDynamique.dart';
 
 class Loadingpage extends StatefulWidget {
   const Loadingpage({super.key});
@@ -24,8 +23,14 @@ class _LoadingpageState extends State<Loadingpage> {
     'Thies',
     'Saint-Louis',
     'Ziguinchor',
-    'Touba',
+    'Kaolack',
   ];
+
+  final MeteoService _meteoService = MeteoService();
+
+  Timer? _timer;
+  int _messageIndex = 0;
+  final List<String> _messages = MessagesDynamique.messages;
 
   List<Ville> _villes = [];
 
@@ -34,35 +39,70 @@ class _LoadingpageState extends State<Loadingpage> {
   @override
   void initState() {
     super.initState();
+    _timer = Timer.periodic(Duration(seconds: 2), (timer) {
+      setState(() {
+        if (_messageIndex < _messages.length - 1) {
+          _messageIndex++;
+        } else {
+          _timer?.cancel();
+        }
+      });
+    });
     chargerDonnees();
+  }
+
+  Future<void> _animerProgression(double cible) async {
+    while (_progression < cible) {
+      await Future.delayed(Duration(milliseconds: 50));
+      setState(() {
+        _progression += 0.01;
+        if (_progression > cible) _progression = cible;
+      });
+    }
   }
 
   Future<void> chargerDonnees() async {
     for (int i = 0; i < villes.length; i++) {
-      final url = Uri.parse(
-        '${Constants.baseUrl}?q=${villes[i]}&appid=${Constants.apiKey}&lang=fr&units=metric',
-      );
-      final reponse = await http.get(url);
-
-      if (reponse.statusCode == 200) {
-        final Map<String, dynamic> donneer = convert.json.decode(reponse.body);
-
+      try {
+        final ville = await _meteoService.getVille(villes[i]);
         setState(() {
-          _villes.add(Ville.fromJson(donneer));
-          _progression = (i + 1) / villes.length;
+          _villes.add(ville);
         });
-      } else {
-        print("Ca n'a pas marcher tonton : ${reponse.statusCode}");
+        _animerProgression((i + 1) / villes.length);
+        await Future.delayed(Duration(seconds: 1));
+      } catch (e) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('Erreur'),
+            content: Text('Impossible de charger les données météo.'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  chargerDonnees();
+                },
+                child: Text('Réessayer'),
+              ),
+            ],
+          ),
+        );
       }
     }
 
-    Navigator.pushReplacement(
+    Navigator.pushReplacementNamed(
       context,
-      MaterialPageRoute(builder: (context) => Homepage(villeList: _villes)),
+      '/home',
+      arguments: {'villeList': _villes, 'ville': _villes[0]},
     );
   }
 
   @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
     return Scaffold(
@@ -114,7 +154,7 @@ class _LoadingpageState extends State<Loadingpage> {
             Padding(
               padding: EdgeInsets.only(top: 280),
               child: Text(
-                'chargement des donnees en cours...',
+                MessagesDynamique.messages[_messageIndex],
                 style: TextStyle(
                   color: themeProvider.isDarkMode ? Colors.grey : Colors.blue,
                 ),

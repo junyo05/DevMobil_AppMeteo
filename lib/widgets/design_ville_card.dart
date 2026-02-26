@@ -1,25 +1,46 @@
 import 'package:appmeteo/models/ville.dart';
-import 'package:appmeteo/screens/DetailsPage.dart';
 import 'package:appmeteo/themes/themes_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:country_flags/country_flags.dart';
+import 'package:weather_icons/weather_icons.dart';
 
 class DesignVilleCard extends StatelessWidget {
   final Ville ville;
 
   const DesignVilleCard({super.key, required this.ville});
 
-  Color getIconColor(String icone) {
-    if (icone.contains('01d')) return Colors.yellow; // soleil jour
-    if (icone.contains('01n'))
-      return const Color.fromARGB(255, 179, 172, 172); // lune nuit
-    if (icone.contains('02')) return Colors.orange;
-    if (icone.contains('03') || icone.contains('04')) return Colors.white;
-    if (icone.contains('09') || icone.contains('10')) return Colors.blue;
-    if (icone.contains('11')) return Colors.purple;
-    if (icone.contains('50')) return Colors.blueGrey; // brume
-    return Colors.yellow;
+  Widget getIconWidget(String icone) {
+    IconData weatherIcon;
+
+    if (icone.contains('01d'))
+      weatherIcon = WeatherIcons.day_sunny;
+    else if (icone.contains('01n'))
+      weatherIcon = WeatherIcons.moon_alt_new;
+    else if (icone.contains('02d'))
+      weatherIcon = WeatherIcons.day_cloudy;
+    else if (icone.contains('02n'))
+      weatherIcon = WeatherIcons.night_cloudy;
+    else if (icone.contains('03'))
+      weatherIcon = WeatherIcons.cloud;
+    else if (icone.contains('04'))
+      weatherIcon = WeatherIcons.cloudy;
+    else if (icone.contains('09'))
+      weatherIcon = WeatherIcons.showers;
+    else if (icone.contains('10d'))
+      weatherIcon = WeatherIcons.day_rain;
+    else if (icone.contains('10n'))
+      weatherIcon = WeatherIcons.night_rain;
+    else if (icone.contains('11'))
+      weatherIcon = WeatherIcons.thunderstorm;
+    else if (icone.contains('13'))
+      weatherIcon = WeatherIcons.snow;
+    else if (icone.contains('50'))
+      weatherIcon = WeatherIcons.fog;
+    else
+      weatherIcon = WeatherIcons.day_sunny;
+
+    return Icon(weatherIcon, size: 50, color: Colors.blue.withOpacity(0.5));
   }
 
   @override
@@ -28,16 +49,17 @@ class DesignVilleCard extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-        Navigator.push(
+        Navigator.pushReplacementNamed(
           context,
-          MaterialPageRoute(builder: (context) => Detailspage(ville: ville)),
+          '/details',
+          arguments: {'ville': ville},
         );
       },
       child: Container(
         height: 180,
         width: double.infinity,
-        margin: EdgeInsets.all(5),
-        padding: EdgeInsets.all(25),
+        margin: EdgeInsets.all(3),
+        padding: EdgeInsets.all(10),
         decoration: BoxDecoration(
           color: themeProvider.isDarkMode
               ? const Color.fromARGB(255, 0, 12, 66)
@@ -46,49 +68,48 @@ class DesignVilleCard extends StatelessWidget {
         ),
 
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            SizedBox(height: 5),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
                         CountryFlag.fromCountryCode(
-                          'SN',
+                          ville.pays,
                           theme: EmojiTheme(size: 20),
                         ),
-                        Padding(
-                          padding: EdgeInsets.only(left: 10),
-                          child: Text(
-                            ville.nom,
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
+                        SizedBox(width: 2),
+                        Text(
+                          ville.nom,
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                       ],
                     ),
-                    Padding(
-                      padding: EdgeInsets.only(top: 10),
-                      child: Text(ville.description, textAlign: TextAlign.left),
+                    Row(
+                      children: [
+                        SizedBox(height: 5),
+                        Text(ville.description, textAlign: TextAlign.left),
+                      ],
                     ),
                   ],
                 ),
                 Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
-                        Image.network(
-                          'https://openweathermap.org/img/wn/${ville.icone}@2x.png',
-                          height: 70,
-                          width: 70,
-                          color: getIconColor(ville.icone),
-                        ),
+                        SizedBox(height: 50, child: getIconWidget(ville.icone)),
                         Padding(
                           padding: EdgeInsets.only(
-                            left: 5,
+                            left: 10,
                             right: 5,
                             bottom: 5,
                           ),
@@ -99,7 +120,7 @@ class DesignVilleCard extends StatelessWidget {
                                   ? Colors.white
                                   : Colors.black,
                               fontWeight: FontWeight.bold,
-                              fontSize: 18,
+                              fontSize: 22,
                             ),
                           ),
                         ),
@@ -109,19 +130,20 @@ class DesignVilleCard extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: 10),
+
+            SizedBox(height: 30),
             Row(
               children: [
                 Row(
                   children: [
                     Icon(
-                      Icons.water,
+                      WeatherIcons.humidity,
                       color: themeProvider.isDarkMode
                           ? Colors.blue
                           : Colors.blue,
                     ),
                     Padding(
-                      padding: EdgeInsets.only(left: 5, right: 10),
+                      padding: EdgeInsets.only(left: 2, right: 15),
                       child: Text(
                         '${ville.humidite}%',
                         style: TextStyle(
@@ -135,14 +157,17 @@ class DesignVilleCard extends StatelessWidget {
                 ),
                 Row(
                   children: [
-                    Icon(
-                      Icons.wind_power,
-                      color: themeProvider.isDarkMode
-                          ? Colors.blue
-                          : Colors.blue,
+                    SizedBox(
+                      height: 18,
+                      child: Icon(
+                        WeatherIcons.wind_beaufort_0,
+                        color: themeProvider.isDarkMode
+                            ? Colors.blue
+                            : Colors.blue,
+                      ),
                     ),
                     Padding(
-                      padding: EdgeInsets.only(left: 5, right: 10),
+                      padding: EdgeInsets.only(left: 4, right: 15),
                       child: Text(
                         '${ville.vitesseVent}km/h',
                         style: TextStyle(
@@ -163,7 +188,7 @@ class DesignVilleCard extends StatelessWidget {
                           : Colors.blue,
                     ),
                     Padding(
-                      padding: EdgeInsets.only(left: 5, right: 10),
+                      padding: EdgeInsets.only(left: 2, right: 15),
                       child: Text(
                         '${ville.visibilite}km',
                         style: TextStyle(
@@ -191,7 +216,15 @@ class DesignVilleCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                Icon(Icons.arrow_right, size: 18),
+                SizedBox(height: 10),
+                SizedBox(
+                  height: 10,
+                  child: Icon(
+                    Icons.arrow_right_alt,
+                    size: 18,
+                    color: Colors.blue,
+                  ),
+                ),
               ],
             ),
           ],
