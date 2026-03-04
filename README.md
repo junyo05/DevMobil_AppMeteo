@@ -16,3 +16,5 @@ For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
 
+// Les membres de ce groupe son Axel Youri Ngomas Moukady, Stephane Heritier Amaka ainsi que moi meme Junyo Pascal Biyamba Vevy
+(Nb: Ce travail a ete realiser en presentiel par les trois exposants pendant nos soiree et push depuis cette machine uniquement )
